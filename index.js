@@ -1,6 +1,6 @@
 import express from 'express'
 
-const tasks = [
+let tasks = [
     { id: 1, name: 'lam bai tap ve nha nodejs', complated: false },
     { id: 2, name: 'di cho mua thuc pham cuoi tuan', complated: true },
     { id: 3, name: `Doc het chuong 5 cua sanh "cleancode"`, complated: false },
@@ -11,6 +11,7 @@ app.use(express.json());
 app.get('/', (req, res) => {
     res.send('Server is running on port 3000')
 })
+//create
 app.get('/api/v1/tasks', (req, res) => {
     res.status(200).json({
         status: 'success',
@@ -46,32 +47,55 @@ app.post('/api/v1/tasks', (req, res) => {
             .json({ success: false, msg: 'Please provide a name for the task' });
     }
 });
-app.put('/api/v1/tasks/:id', (rep, res) => {
+//put
+app.put('/api/v1/tasks/:id', (req, res) => {
     const { id } = req.params;
     const { name, completed } = req.body;
     const idToFind = parseInt(id);
+
+    // Em đã tìm task ở đây, rất tốt!
     const foundTask = tasks.find(task => task.id === idToFind);
+
     if (!foundTask) {
         return res.status(404).json({
             success: false,
-            msg: `No task with id ${taskId}` // Dùng template string cho gọn
+            msg: `No task with id ${idToFind}`
         });
     }
     else {
         const updatedTask = {
-            ...taskToUpdate, // Sao chép tất cả thuộc tính cũ
-            name: name !== undefined ? name : taskToUpdate.name, // Ghi đè name nếu có
-            completed: completed !== undefined ? completed : taskToUpdate.completed, // Ghi đè completed nếu có
+
+            ...foundTask,
+            name: name !== undefined ? name : foundTask.name,
+            completed: completed !== undefined ? completed : foundTask.completed,
         };
+
         const taskIndex = tasks.findIndex(task => task.id === idToFind);
-        // Thay thế đối tượng cũ bằng đối tượng đã cập nhật
+
         tasks[taskIndex] = updatedTask;
+
         res.status(200).json({
             success: true,
             data: updatedTask
         });
     }
-
 })
 
+//delete
+app.delete('/api/v1/tasks/:id', (req, res) => {
+    const { id } = req.params;
+    const taskID = parseInt(id);
+    const taskToDelete = tasks.find(task => task.id === taskID);
+    if (!taskToDelete) {
+        return res.status(404).json({
+            success: false,
+            msg: `No task with id ${taskID}`
+        });
+    }
+    tasks = tasks.filter(task => task.id !== taskID);
+    res.status(200).json({
+        success: true,
+        msg: 'Task deleted successfully'
+    });
+})
 app.listen(3000)
