@@ -1,17 +1,20 @@
-import express from 'express';
+// routes/tasks.js
+
+const express = require('express');
 const router = express.Router();
 
-// Import các function từ controller
-import {
+// Nhập các "đầu bếp" từ controller
+const {
     getAllTasks,
     createTask,
+    getTask,
     updateTask,
-    deleteTask
-} from '../controllers/tasks.js';
+    deleteTask,
+} = require('../controllers/tasks');
 
-// Định nghĩa các đường dẫn
-// !!! SỬA LẠI ĐƯỜNG DẪN Ở ĐÂY !!!
+// Định nghĩa các con đường và giao nhiệm vụ cho đầu bếp tương ứng
 router.route('/').get(getAllTasks).post(createTask);
-router.route('/:id').put(updateTask).delete(deleteTask);
+router.route('/:id').get(getTask).put(updateTask).delete(deleteTask);
 
-export default router;
+// Xuất khẩu bảng chỉ đường này ra ngoài
+module.exports = router;

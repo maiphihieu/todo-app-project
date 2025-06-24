@@ -1,93 +1,74 @@
-// Dữ liệu giả được chuyển vào đây để controller quản lý
-// Trong file controllers/tasks.js
+// controllers/tasks.js
 
+// Dữ liệu giả của chúng ta, do controller quản lý
 let tasks = [
-    // Sửa 'complated' thành 'completed'
-    { id: 1, name: 'Làm bài tập về nhà môn NodeJS', completed: false },
-    { id: 2, name: 'Đi chợ mua thực phẩm cho cuối tuần', completed: true },
-    { id: 3, name: 'Đọc hết chương 5 của sách "Clean Code"', completed: false },
+    { id: 1, name: 'Học NodeJS cơ bản', completed: false },
+    { id: 2, name: 'Hoàn thành Tái cấu trúc Code', completed: true },
+    { id: 3, name: 'Chuẩn bị cho việc kết nối Database', completed: false },
 ];
 
-// READ - Lấy tất cả tasks
-export const getAllTasks = (req, res) => {
-    res.status(200).json({
-        status: 'success',
-        results: tasks.length,
-        data: {
-            tasks: tasks
-        }
-    });
+// READ ALL - Lấy tất cả tasks
+const getAllTasks = (req, res) => {
+    res.status(200).json({ success: true, data: tasks });
 };
 
 // CREATE - Tạo một task mới
-export const createTask = (req, res) => {
+const createTask = (req, res) => {
     const { name } = req.body;
     if (!name) {
-        return res
-            .status(400)
-            .json({ success: false, msg: 'Please provide a name for the task' });
+        return res.status(400).json({ success: false, msg: 'Please provide a name' });
     }
     const newID = tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1;
-    const newTask = {
-        id: newID,
-        name: name,
-        completed: false
-    };
+    const newTask = { id: newID, name: name, completed: false };
     tasks.push(newTask);
-    res.status(201).json({
-        status: 'success',
-        data: {
-            task: newTask
-        }
-    });
+    res.status(201).json({ success: true, data: newTask });
 };
 
-// UPDATE - Cập nhật một task
-export const updateTask = (req, res) => {
+// READ ONE - Lấy một task theo ID
+const getTask = (req, res) => {
     const { id } = req.params;
-    const taskId = parseInt(id);
-    const taskToUpdate = tasks.find(task => task.id === taskId);
-
-    if (!taskToUpdate) {
-        return res.status(404).json({
-            success: false,
-            msg: `No task with id ${taskId}`
-        });
+    const task = tasks.find((t) => t.id === Number(id));
+    if (!task) {
+        return res.status(404).json({ success: false, msg: `No task with id: ${id}` });
     }
-
-    const updatedTask = {
-        ...taskToUpdate,
-        name: req.body.name || taskToUpdate.name,
-        completed: req.body.completed !== undefined ? req.body.completed : taskToUpdate.completed,
-    };
-    
-    const taskIndex = tasks.findIndex(task => task.id === taskId);
-    tasks[taskIndex] = updatedTask;
-
-    res.status(200).json({
-        success: true,
-        data: updatedTask
-    });
+    res.status(200).json({ success: true, data: task });
 };
 
-// DELETE - Xóa một task
-export const deleteTask = (req, res) => {
+// UPDATE - Cập nhật một task theo ID
+const updateTask = (req, res) => {
     const { id } = req.params;
-    const taskId = parseInt(id);
-    const taskToDelete = tasks.find(task => task.id === taskId);
+    const { name, completed } = req.body;
+
+    const taskToUpdate = tasks.find((t) => t.id === Number(id));
+    if (!taskToUpdate) {
+        return res.status(404).json({ success: false, msg: `No task with id: ${id}` });
+    }
+    // Cập nhật các trường nếu chúng tồn tại trong request body
+    taskToUpdate.name = name !== undefined ? name : taskToUpdate.name;
+    taskToUpdate.completed = completed !== undefined ? completed : taskToUpdate.completed;
+
+    res.status(200).json({ success: true, data: taskToUpdate });
+};
+
+// DELETE - Xóa một task theo ID
+const deleteTask = (req, res) => {
+    const { id } = req.params;
+    const taskToDelete = tasks.find((t) => t.id === Number(id));
 
     if (!taskToDelete) {
-        return res.status(404).json({
-            success: false,
-            msg: `No task with id ${taskId}`
-        });
+        return res.status(404).json({ success: false, msg: `No task with id: ${id}` });
     }
+    // Tạo ra mảng mới không chứa task bị xóa
+    tasks = tasks.filter((t) => t.id !== Number(id));
 
-    tasks = tasks.filter(task => task.id !== taskId);
-    res.status(200).json({
-        success: true,
-        msg: 'Task deleted successfully'
-    });
+    res.status(200).json({ success: true, msg: 'Task deleted successfully' });
 };
 
-// Lưu ý: Hiện tại chúng ta chưa có endpoint GET một task, nhưng nếu có, nó sẽ ở đây.
+// Xuất khẩu tất cả các function để router có thể dùng
+module.exports = {
+    getAllTasks,
+    createTask,
+    getTask,
+    updateTask,
+    deleteTask,
+};
