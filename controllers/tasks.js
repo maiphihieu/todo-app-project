@@ -1,5 +1,5 @@
 // controllers/tasks.js
-
+const Task = require('../models/Task');
 // Dữ liệu giả của chúng ta, do controller quản lý
 let tasks = [
     { id: 1, name: 'Học NodeJS cơ bản', completed: false },
@@ -13,15 +13,14 @@ const getAllTasks = (req, res) => {
 };
 
 // CREATE - Tạo một task mới
-const createTask = (req, res) => {
-    const { name } = req.body;
-    if (!name) {
-        return res.status(400).json({ success: false, msg: 'Please provide a name' });
+// logic mới cho createTask trong controllers/tasks.js
+const createTask = async (req, res) => {
+    try {
+        const task = await Task.create(req.body);
+        res.status(201).json({ success: true, data: task });
+    } catch (error) {
+        res.status(500).json({ success: false, msg: error });
     }
-    const newID = tasks.length > 0 ? tasks[tasks.length - 1].id + 1 : 1;
-    const newTask = { id: newID, name: name, completed: false };
-    tasks.push(newTask);
-    res.status(201).json({ success: true, data: newTask });
 };
 
 // READ ONE - Lấy một task theo ID
@@ -63,6 +62,8 @@ const deleteTask = (req, res) => {
 
     res.status(200).json({ success: true, msg: 'Task deleted successfully' });
 };
+
+
 
 // Xuất khẩu tất cả các function để router có thể dùng
 module.exports = {

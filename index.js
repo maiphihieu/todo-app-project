@@ -1,23 +1,29 @@
-// index.js
-
+// index.js (phiên bản cập nhật)
 const express = require('express');
 const app = express();
 const port = 3000;
+require('dotenv').config(); // Để có thể dùng biến trong file .env
 
 const tasksRouter = require('./routes/tasks');
+const connectDB = require('./db/connect');
 
-// Middleware để "phiên dịch" JSON mà client gửi lên
 app.use(express.json());
 
-// Route chào mừng để kiểm tra server có chạy không
 app.get('/', (req, res) => {
     res.send('<h1>Todo App API</h1><p>Welcome!</p>');
 });
 
-// Gắn "bảng chỉ đường" tasks vào địa chỉ gốc /api/v1/tasks
 app.use('/api/v1/tasks', tasksRouter);
 
-// Khởi động server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}...`);
-});
+const start = async () => {
+    try {
+        await connectDB(process.env.MONGO_URI);
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}...`);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+start();
