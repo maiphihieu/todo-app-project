@@ -14,7 +14,10 @@ const {
 
 // Định nghĩa các con đường và giao nhiệm vụ cho đầu bếp tương ứng
 router.route('/').get(getAllTasks).post(createTask);
-router.route('/:id').get(getTask).put(updateTask).delete(deleteTask);
+router.route('/:id')
+    .get(getTask)
+    .put(updateTask)
+    .delete(deleteTask);
 
 // Xuất khẩu bảng chỉ đường này ra ngoài
 module.exports = router;
