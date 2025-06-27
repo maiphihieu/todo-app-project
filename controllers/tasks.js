@@ -3,27 +3,27 @@
 const Task = require('../models/Task');
 
 // READ ALL - Lấy tất cả tasks
-const getAllTasks = async (req, res) => {
+const getAllTasks = async (req, res, next) => {
     try {
         const tasks = await Task.find({});
         res.status(200).json({ success: true, data: tasks });
     } catch (error) {
-        res.status(500).json({ success: false, msg: error });
+        next(error);
     }
 };
 
 // CREATE - Tạo một task mới
-const createTask = async (req, res) => {
+const createTask = async (req, res, next) => {
     try {
         const task = await Task.create(req.body);
         res.status(201).json({ success: true, data: task });
     } catch (error) {
-        res.status(500).json({ success: false, msg: error });
+        next(error);
     }
 };
 
 // READ ONE - Lấy một task theo ID
-const getTask = async (req, res) => {
+const getTask = async (req, res, next) => {
     try {
         const { id: taskId } = req.params;
         const task = await Task.findOne({ _id: taskId });
@@ -34,12 +34,12 @@ const getTask = async (req, res) => {
 
         res.status(200).json({ success: true, data: task });
     } catch (error) {
-        res.status(500).json({ success: false, msg: error });
+        next(error);
     }
 };
 
 // UPDATE - Cập nhật một task theo ID (PHIÊN BẢN SỬA LẠI)
-const updateTask = async (req, res) => {
+const updateTask = async (req, res, next) => {
     try {
         const { id: taskId } = req.params;
         // Dùng findOneAndUpdate để tìm và sửa trong 1 lệnh
@@ -54,12 +54,12 @@ const updateTask = async (req, res) => {
 
         res.status(200).json({ success: true, data: task });
     } catch (error) {
-        res.status(500).json({ success: false, msg: error });
+        next(error);
     }
 };
 
 // DELETE - Xóa một task theo ID (PHIÊN BẢN SỬA LẠI)
-const deleteTask = async (req, res) => {
+const deleteTask = async (req, res, next) => {
     try {
         const { id: taskId } = req.params;
         // Dùng findOneAndDelete để tìm và xóa trong 1 lệnh
@@ -71,7 +71,7 @@ const deleteTask = async (req, res) => {
 
         res.status(200).json({ success: true, msg: 'Task deleted successfully' });
     } catch (error) {
-        res.status(500).json({ success: false, msg: error });
+        next(error);
     }
 };
 
