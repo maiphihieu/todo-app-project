@@ -1,5 +1,6 @@
 // index.js (phiên bản cập nhật)
 const express = require('express');
+const notFound = require('./Middleware/not-found');
 const app = express();
 const port = 3000;
 require('dotenv').config(); // Để có thể dùng biến trong file .env
@@ -14,7 +15,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1/tasks', tasksRouter);
-
+app.use(notFound); 
 const start = async () => {
     try {
         await connectDB(process.env.MONGO_URI);
