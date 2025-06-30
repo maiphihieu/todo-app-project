@@ -5,7 +5,7 @@ const Task = require('../models/Task');
 // READ ALL - Lấy tất cả tasks
 const getAllTasks = async (req, res, next) => {
     try {
-        const { completed, name, sort } = req.query;
+        const { completed, name, sort, fields } = req.query;
         const queryObject = {};
 
         if (completed) {
@@ -27,6 +27,11 @@ const getAllTasks = async (req, res, next) => {
             // Mặc định sắp xếp theo thời gian tạo (nếu không có yêu cầu)
             // MongoDB sẽ tự có trường createdAt khi tạo document
             result = result.sort('createdAt');
+        }
+
+        if (fields) {
+            const fieldsList = fields.split(',').join(' ');
+            result = result.select(fieldsList);
         }
 
         const tasks = await result;
