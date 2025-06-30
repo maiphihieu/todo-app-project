@@ -5,8 +5,13 @@ const Task = require('../models/Task');
 // READ ALL - Lấy tất cả tasks
 const getAllTasks = async (req, res, next) => {
     try {
-        const tasks = await Task.find({});
-        res.status(200).json({ success: true, data: tasks });
+        const { completed } = req.query;
+        const queryObject = {};
+        if (completed) {
+            queryObject.completed = (completed === 'true');
+        }
+        const tasks = await Task.find(queryObject);
+        res.status(200).json({ success: true, count: tasks.length, data: tasks });
     } catch (error) {
         next(error);
     }
