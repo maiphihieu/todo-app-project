@@ -5,8 +5,9 @@ const Task = require('../models/Task');
 // READ ALL - Lấy tất cả tasks
 const getAllTasks = async (req, res, next) => {
     try {
-        const { completed, name } = req.query;
+        const { completed, name, sort } = req.query;
         const queryObject = {};
+
         if (completed) {
             queryObject.completed = (completed === 'true');
         }
@@ -14,7 +15,21 @@ const getAllTasks = async (req, res, next) => {
         if (name) {
             queryObject.name = { $regex: name, $options: 'i' };
         }
-        const tasks = await Task.find(queryObject);
+
+        let result = Task.find(queryObject); // Bắt đầu xây dựng chuỗi truy vấn, chưa dùng await vội
+
+        // Logic sắp xếp
+        if (sort) {
+            // Mongoose cần các trường sort cách nhau bởi dấu cách, không phải dấu phẩy
+            const sortList = sort.split(',').join(' ');
+            result = result.sort(sortList);
+        } else {
+            // Mặc định sắp xếp theo thời gian tạo (nếu không có yêu cầu)
+            // MongoDB sẽ tự có trường createdAt khi tạo document
+            result = result.sort('createdAt');
+        }
+
+        const tasks = await result;
         res.status(200).json({ success: true, count: tasks.length, data: tasks });
     } catch (error) {
         next(error);
