@@ -5,7 +5,7 @@ const Task = require('../models/Task');
 // READ ALL - Lấy tất cả tasks
 const getAllTasks = async (req, res, next) => {
     try {
-        const { completed, name, sort, fields } = req.query;
+        const { completed, name, sort, fields, } = req.query;
         const queryObject = {};
 
         if (completed) {
@@ -33,6 +33,15 @@ const getAllTasks = async (req, res, next) => {
             const fieldsList = fields.split(',').join(' ');
             result = result.select(fieldsList);
         }
+
+        // ... ngay sau khối if (fields)
+
+        // Logic phân trang
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10; // Đặt số lượng mặc định là 10
+        const skip = (page - 1) * limit;
+
+        result = result.skip(skip).limit(limit);
 
         const tasks = await result;
         res.status(200).json({ success: true, count: tasks.length, data: tasks });
