@@ -2,21 +2,19 @@
 const express = require('express');
 const notFound = require('./Middleware/not-found');
 const errorHandlerMiddleware = require('./Middleware/error-handler');
+const authRouter = require('./routes/auth');
 const app = express();
 const port = 3000;
 require('dotenv').config(); // Để có thể dùng biến trong file .env
-
 const tasksRouter = require('./routes/tasks');
 const connectDB = require('./db/connect');
-
 app.use(express.json());
-
 app.get('/', (req, res) => {
     res.send('<h1>Todo App API</h1><p>Welcome!</p>');
 });
-
+app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/tasks', tasksRouter);
-app.use(notFound); 
+app.use(notFound);
 app.use(errorHandlerMiddleware);
 const start = async () => {
     try {
@@ -28,5 +26,4 @@ const start = async () => {
         console.log(error);
     }
 };
-
 start();
