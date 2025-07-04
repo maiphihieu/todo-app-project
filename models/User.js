@@ -1,6 +1,7 @@
 // models/User.js
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs'); // Import thư viện mã hóa
+const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({
     name: {
@@ -30,5 +31,22 @@ UserSchema.pre('save', async function() {
     const salt = await bcrypt.genSalt(10); // Tạo một chuỗi ngẫu nhiên để "rắc muối"
     this.password = await bcrypt.hash(this.password, salt); // Băm mật khẩu với "muối"
 });
+
+UserSchema.methods.createJWT = function () {
+    return jwt.sign(
+        { userId: this._id, name: this.name }, // Dữ liệu muốn đưa vào token
+        process.env.JWT_SECRET, // Chìa khóa bí mật
+        { expiresIn: process.env.JWT_LIFETIME } // Thời gian hết hạn
+    );
+};
+
+// models/User.js
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+    const isMatch = await bcrypt.compare(candidatePassword, this.password);
+    return isMatch;
+};
+
+// models/User.js
+
 
 module.exports = mongoose.model('User', UserSchema);

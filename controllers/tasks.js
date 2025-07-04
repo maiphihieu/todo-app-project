@@ -6,7 +6,7 @@ const Task = require('../models/Task');
 const getAllTasks = async (req, res, next) => {
     try {
         const { completed, name, sort, fields, } = req.query;
-        const queryObject = {};
+        const queryObject = { createdBy: req.user.userId };
 
         if (completed) {
             queryObject.completed = (completed === 'true');
@@ -64,7 +64,8 @@ const createTask = async (req, res, next) => {
 const getTask = async (req, res, next) => {
     try {
         const { id: taskId } = req.params;
-        const task = await Task.findOne({ _id: taskId });
+        const { userId } = req.user;
+        const task = await Task.findOne({ _id: taskId, createdBy: userId });
 
         if (!task) {
             return res.status(404).json({ success: false, msg: `No task with id: ${taskId}` });
@@ -80,8 +81,9 @@ const getTask = async (req, res, next) => {
 const updateTask = async (req, res, next) => {
     try {
         const { id: taskId } = req.params;
+        const { userId } = req.user;
         // Dùng findOneAndUpdate để tìm và sửa trong 1 lệnh
-        const task = await Task.findOneAndUpdate({ _id: taskId }, req.body, {
+        const task = await Task.findOneAndUpdate({ _id: taskId, createdBy: userId }, req.body, {
             new: true, // Trả về document mới sau khi đã cập nhật
             runValidators: true, // Áp dụng các quy tắc validation trong Schema
         });
@@ -100,8 +102,9 @@ const updateTask = async (req, res, next) => {
 const deleteTask = async (req, res, next) => {
     try {
         const { id: taskId } = req.params;
+        const { userId } = req.user;
         // Dùng findOneAndDelete để tìm và xóa trong 1 lệnh
-        const task = await Task.findOneAndDelete({ _id: taskId });
+        const task = await Task.findOneAndDelete({ _id: taskId, createdBy: userId });
 
         if (!task) {
             return res.status(404).json({ success: false, msg: `No task with id: ${taskId}` });
