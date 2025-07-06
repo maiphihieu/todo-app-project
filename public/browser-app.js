@@ -30,11 +30,15 @@ const showTasks = async () => {
         }
 
         // Nếu có tasks, tạo ra các thẻ HTML để hiển thị
+        // Bên trong hàm showTasks
         const allTasks = tasks.map((task) => {
             const { completed, _id: taskID, name } = task;
-            return `<div class="single-task">
-                        <h5>${name}</h5>
-                    </div>`;
+            return `<div class="single-task ${completed && 'task-completed'}">
+                <h5><span>${name}</span></h5>
+                <button type="button" class="delete-btn" data-id="${taskID}">
+                    Delete
+                </button>
+            </div>`;
         }).join('');
 
         tasksDOM.innerHTML = allTasks;
@@ -70,4 +74,26 @@ formDOM.addEventListener('submit', async (e) => {
     }
 });
 
+// Xử lý sự kiện click để xóa
+tasksDOM.addEventListener('click', async (e) => {
+    const el = e.target; // Lấy về phần tử đã được click
+
+    // Kiểm tra xem phần tử đó có phải là nút 'delete-btn' không
+    if (el.classList.contains('delete-btn')) {
+        const id = el.dataset.id; // Lấy id từ thuộc tính data-id
+        try {
+            // Gọi API DELETE /tasks/:id
+            await fetch(`/api/v1/tasks/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
+            });
+            // Tải lại danh sách sau khi xóa thành công
+            showTasks();
+        } catch (error) {
+            console.log(error);
+        }
+    }
+});
 showTasks();
