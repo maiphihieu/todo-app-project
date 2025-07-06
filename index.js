@@ -4,7 +4,8 @@ const notFound = require('./Middleware/not-found');
 const errorHandlerMiddleware = require('./Middleware/error-handler');
 const authRouter = require('./routes/auth');
 const app = express();
-const port = 3000;
+// index.js
+const port = process.env.PORT || 3000; // Ưu tiên cổng của môi trường production
 require('dotenv').config(); // Để có thể dùng biến trong file .env
 const tasksRouter = require('./routes/tasks');
 const connectDB = require('./db/connect');
