@@ -9,6 +9,7 @@ require('dotenv').config(); // Để có thể dùng biến trong file .env
 const tasksRouter = require('./routes/tasks');
 const connectDB = require('./db/connect');
 app.use(express.json());
+app.use(express.static('./public'));
 app.get('/', (req, res) => {
     res.send('<h1>Todo App API</h1><p>Welcome!</p>');
 });
