@@ -8,7 +8,7 @@ const tasksDOM = document.querySelector('.tasks-container');
 // 1. Dùng Postman, đăng nhập với một user của em để lấy token.
 // 2. Copy chuỗi token đó.
 // 3. Dán vào vị trí 'YOUR_TOKEN_HERE'.
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODY4MDE3ZGU3YzZjODZjZGU0ZGEzN2QiLCJuYW1lIjoiVXNlciBBIiwiaWF0IjoxNzUxNzcwOTcxLCJleHAiOjE3NTQzNjI5NzF9.YlvYLMX0uqt0O2hgminOhcn0gHDtb5UucQSUyHP0kbM';
+const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODZhNDFkNmU0N2ZjNjVkYjBhNzY0ZWYiLCJuYW1lIjoiSGlldSBNYWkiLCJpYXQiOjE3NTE3OTQxMzQsImV4cCI6MTc1NDM4NjEzNH0.BTWzHXdEV3lmyscLD7vHTFdHlSnRBgSfsCR823kAUfY';
 // =================================================================
 
 // Hàm để lấy và hiển thị tất cả tasks
