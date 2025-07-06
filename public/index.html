@@ -8,10 +8,14 @@
 </head>
 
 <body>
-    <h1>My Tasks</h1>
-    <div class="tasks-container">
-        <h5>Loading...</h5>
-    </div>
+    <h1>Task Manager</h1>
+
+    <form class="task-form">
+        <input type="text" name="name" class="task-input" placeholder="e.g. wash dishes" autocomplete="off" />
+        <button type="submit" class="btn submit-btn">Submit</button>
+    </form>
+
+    <div class="tasks-container"></div>
 
     <script src="./browser-app.js"></script>
 </body>

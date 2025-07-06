@@ -1,5 +1,6 @@
 // public/browser-app.js
-
+const formDOM = document.querySelector('.task-form');
+const taskInputDOM = document.querySelector('.task-input');
 const tasksDOM = document.querySelector('.tasks-container');
 
 // =================================================================
@@ -42,5 +43,31 @@ const showTasks = async () => {
         console.log(error);
     }
 };
+// Xử lý form submit
+formDOM.addEventListener('submit', async (e) => {
+    e.preventDefault(); // Ngăn trình duyệt reload lại trang
+
+    const name = taskInputDOM.value; // Lấy giá trị từ ô input
+
+    try {
+        // Gọi API POST /tasks
+        await fetch('/api/v1/tasks', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Báo cho server biết ta gửi JSON
+                'Authorization': `Bearer ${token}`,
+            },
+            body: JSON.stringify({ name }), // Chuyển object JS thành chuỗi JSON
+        });
+
+        // Sau khi tạo thành công, gọi lại showTasks() để làm mới danh sách
+        showTasks();
+        taskInputDOM.value = ''; // Xóa chữ trong ô input
+
+    } catch (error) {
+        console.log(error);
+        // Có thể thêm code để hiển thị lỗi cho người dùng ở đây
+    }
+});
 
 showTasks();
